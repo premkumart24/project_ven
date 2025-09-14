@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VennDraBio — ThunderBio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f9ff;
+    --card:#ffffff;
+    --muted:#9aa7b2;
+    --radius:20px;
+    --shadow: 0 12px 40px rgba(16,24,40,0.08);
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f6ff 0%, #f1fbff 100%);font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#223;}
+  .wrap{max-width:1400px;margin:30px auto;padding:20px;}
+
+  /* Header / Hero */
+  .hero{
+    background: linear-gradient(135deg, rgba(123,97,255,0.09), rgba(80,201,255,0.05));
+    border-radius:var(--radius);
+    padding:38px 36px;
+    display:flex;
+    gap:28px;
+    align-items:center;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(123,97,255,0.06);
+    min-height:140px;
+  }
+  .logo {
+    width:120px;height:120px;border-radius:22px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.7));
+    box-shadow:0 8px 30px rgba(88,102,210,0.08);
+    overflow:hidden;
+  }
+  .logo img{width:100%;height:100%;object-fit:contain;display:block}
+
+  .hero-text{flex:1;}
+  .prod-title{font-size:40px;margin:0;color:#1f2937;font-weight:800;letter-spacing:-0.4px}
+  .company{font-size:14px;color:var(--muted);margin-top:6px}
+  .tagline{margin-top:10px;color:#475569; font-size:16px}
+
+  /* layout */
+  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:24px;}
+  .card{background:var(--card);border-radius:14px;padding:20px;border:1px solid rgba(16,24,40,0.04);box-shadow:0 10px 30px rgba(16,24,40,0.04);min-height:440px}
+
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .panel-title{font-weight:800;color:#374151;font-size:18px}
+  .clear-all{background:transparent;border:1px solid #ffdede;color:#ef6b6b;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+
+  .sets-area{display:flex;flex-direction:column;gap:14px;margin-top:6px;overflow:auto;padding-right:6px;max-height:640px}
+
+  .set-block{border-radius:12px;padding:12px 14px;border:1px solid rgba(16,24,40,0.03);position:relative;display:block;}
+  .set-block.style-1{background:linear-gradient(180deg, rgba(123,97,255,0.08), rgba(123,97,255,0.02));border-left:6px solid #7b61ff}
+  .set-block.style-2{background:linear-gradient(180deg, rgba(125,211,124,0.06), rgba(125,211,124,0.02));border-left:6px solid #22c55e}
+  .set-block.style-3{background:linear-gradient(180deg, rgba(99,179,255,0.06), rgba(99,179,255,0.02));border-left:6px solid #3b82f6}
+  .set-block .set-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .dot{width:14px;height:14px;border-radius:50%}
+  .dot.p1{background:#7b61ff}
+  .dot.p2{background:#22c55e}
+  .dot.p3{background:#3b82f6}
+  .set-block input[type="text"], .set-block textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(16,24,40,0.06);font-size:14px;box-sizing:border-box;background:rgba(255,255,255,0.88)}
+  .set-remove{position:absolute;right:12px;top:12px;background:transparent;border:none;color:#64748b;cursor:pointer;font-weight:800}
+  .set-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .clear-link{font-size:13px;color:#475569;text-decoration:underline;cursor:pointer}
+
+  .controls{display:flex;gap:12px;align-items:center;margin-top:10px}
+  .btn-primary{background:linear-gradient(90deg,#7b61ff,#50c9ff);color:white;padding:12px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:800;font-size:15px}
+  .btn-ghost{background:white;border:1px solid rgba(16,24,40,0.06);padding:10px 12px;border-radius:10px;cursor:pointer}
+
+  .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .results-title{font-weight:800;color:#1f2937;font-size:18px}
+  .results-toolbar{display:flex;gap:10px;align-items:center}
+  .download-btn{background:linear-gradient(90deg,#3fd5d5,#7beaa3);color:white;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+  .results-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:320px;color:#9aa7b2}
+  #vennImage{max-width:100%;border-radius:12px;border:6px solid rgba(255,255,255,0.6);box-shadow:0 10px 30px rgba(16,24,40,0.06);display:block}
+  .image-wrap{display:flex;justify-content:center;align-items:center}
+  .intersections-pre{margin-top:12px;font-size:13px;color:#344054;background:linear-gradient(180deg,rgba(250,250,255,0.6),rgba(250,250,255,0.4));padding:12px;border-radius:10px;border:1px solid rgba(16,24,40,0.04);white-space:pre-wrap;max-height:260px;overflow:auto}
+
+  .footer-bottom{margin-top:14px;border-top:1px solid rgba(16,24,40,0.03);padding-top:12px;color:#9aa7b2;font-size:13px;text-align:center}
+
+  .spinner {display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);border-top-color: rgba(255,255,255,0.95);animation: spin 0.9s linear infinite;margin-left:8px;}
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width:980px){
+    .main-grid{grid-template-columns:1fr; }
+    .wrap{padding:12px}
+    .hero{flex-direction:column;align-items:flex-start;gap:12px;min-height:120px}
+    .logo{width:92px;height:92px}
+    .prod-title{font-size:26px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="logo" title="ThunderBio logo">
+        <img src="/logo.png" alt="Thunder logo" onerror="this.onerror=null; this.src='/fallback.svg'">
+      </div>
+      <div class="hero-text">
+        <div class="prod-title">VennDraBio</div>
+        <div class="company">by ThunderBio — Professional Venn Diagram Generator</div>
+      </div>
+    </div>
+
+    <div class="main-grid" style="margin-top:22px;">
+      <div class="card">
+        <div class="panel-head">
+          <div class="panel-title">Input Sets</div>
+          <button class="clear-all" id="clearAllBtn">Clear All</button>
+        </div>
+
+        <div class="sets-area" id="setsArea"></div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <div>
+            <button id="addSetBtn" class="btn-ghost">+ Add Set</button>
+          </div>
+          <div class="controls">
+            <button id="generateBtn" class="btn-primary">Generate Venn Diagram</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="results-header">
+          <div class="results-title">Results</div>
+          <div class="results-toolbar">
+            <button id="downloadBtn" class="download-btn" style="display:none">⬇ Download Results</button>
+          </div>
+        </div>
+
+        <div id="resultsArea">
+          <div class="results-empty" id="emptyHint">
+            <svg width="68" height="68" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="7" stroke="#e6eef6" stroke-width="2"/></svg>
+            <div class="hint">Enter your sets and click <strong>Generate Venn Diagram</strong></div>
+          </div>
+
+          <div id="imageWrap" class="image-wrap" style="display:none">
+            <img id="vennImage" alt="Venn diagram">
+          </div>
+
+          <pre id="intersectionsPre" class="intersections-pre" style="display:none"></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © <span id="year"></span> ThunderBio · VennDraBio
+    </div>
+  </div>
+
+<script>
+  // --- set this to your backend URL (no trailing slash) ---
+  const API_URL = "https://REPLACE_WITH_YOUR_BACKEND_URL";
+
+  const MAX_SETS = 6;
+  const INITIAL_VISIBLE = 2;
+  let createdIndices = [];
+  const setsArea = document.getElementById("setsArea");
+  const addSetBtn = document.getElementById("addSetBtn");
+  const generateBtn = document.getElementById("generateBtn");
+  const clearAllBtn = document.getElementById("clearAllBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  let lastResults = null;
+
+  function setStyleForIndex(i){
+    const styles = ['style-1','style-2','style-3'];
+    return styles[(i-1) % styles.length];
+  }
+  function createSetBlock(index){
+    const div = document.createElement("div");
+    div.className = "set-block " + setStyleForIndex(index);
+    div.dataset.index = index;
+    div.innerHTML = `
+      <div class="set-head">
+        <div class="set-head-left">
+          <div class="dot p${((index-1)%3)+1}"></div>
+          <div style="font-weight:700">Set ${index}</div>
+        </div>
+        <button class="set-remove" title="Remove set" ${index<=INITIAL_VISIBLE ? 'style="visibility:hidden"' : ''}>✕</button>
+      </div>
+      <div style="margin-top:6px">
+        <input type="text" id="name${index}" placeholder="Enter set name">
+      </div>
+      <div style="margin-top:8px">
+        <textarea id="list${index}" rows="3" placeholder="Enter items (comma/space/newline separated)"></textarea>
+      </div>
+      <div class="set-actions">
+        <a class="clear-link" data-index="${index}">clear</a>
+        <div style="font-size:12px;color:var(--muted)">${index<=INITIAL_VISIBLE ? 'required' : ''}</div>
+      </div>
+    `;
+    const rm = div.querySelector('.set-remove');
+    rm.addEventListener('click', (ev) => { ev.preventDefault(); removeSet(index); });
+    const cl = div.querySelector('.clear-link');
+    cl.addEventListener('click', (ev)=>{ ev.preventDefault(); document.getElementById('list'+index).value=''; });
+    return div;
+  }
+
+  function addSet(index=null){
+    if(!index){
+      for(let i=1;i<=MAX_SETS;i++){
+        if(!createdIndices.includes(i)){ index = i; break; }
+      }
+    }
+    if(!index || createdIndices.includes(index) || createdIndices.length>=MAX_SETS) return;
+    const block = createSetBlock(index);
+    setsArea.appendChild(block);
+    createdIndices.push(index); createdIndices.sort((a,b)=>a-b);
+    updateAddButton();
+  }
+  function removeSet(index){
+    const block = Array.from(setsArea.children).find(c=>c.dataset.index==index);
+    if(!block) return;
+    block.remove();
+    createdIndices = createdIndices.filter(i=>i!=index);
+    updateAddButton();
+  }
+  function updateAddButton(){
+    if(createdIndices.length>=MAX_SETS){
+      addSetBtn.disabled = true; addSetBtn.textContent = "Max sets reached";
+    } else { addSetBtn.disabled = false; addSetBtn.textContent = "+ Add Set"; }
+  }
+  addSetBtn.addEventListener('click', (ev)=>{ ev.preventDefault(); addSet(); });
+  clearAllBtn.addEventListener('click', ()=> {
+    for(const idx of createdIndices){
+      const n = document.getElementById('name'+idx), t = document.getElementById('list'+idx);
+      if(n) n.value = ''; if(t) t.value = '';
+    }
+    lastResults = null;
+    document.getElementById('intersectionsPre').style.display='none';
+    document.getElementById('imageWrap').style.display='none';
+    document.getElementById('emptyHint').style.display='flex';
+    downloadBtn.style.display='none';
+  });
+
+  // initialize UI sets
+  for(let i=1;i<=INITIAL_VISIBLE;i++) addSet(i);
+
+  function collectSets(){
+    const sets = {};
+    for(const idx of createdIndices){
+      const nameEl = document.getElementById('name'+idx);
+      const listEl = document.getElementById('list'+idx);
+      if(!nameEl || !listEl) continue;
+      const name = nameEl.value.trim();
+      const text = listEl.value.trim();
+      if(name && text){
+        sets[name] = text.split(/[,\\s;]+/).map(s=>s.trim()).filter(Boolean);
+      }
+    }
+    return sets;
+  }
+
+  async function generateVenn() {
+    const sets = collectSets();
+    if(Object.keys(sets).length===0){ alert('⚠ Please enter at least one set with a name and items.'); return; }
+
+  const generateVenn = async () => {};
+    generateBtn.disabled = true;
+    const loader = document.createElement('span');
+    loader.className = 'spinner';
+    generateBtn.appendChild(loader);
+
+    try{
+      const resp = await fetch(API_URL + '/venn', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(sets)
+      });
+      if(!resp.ok){
+        const txt = await resp.text();
+        throw new Error('Server returned ' + resp.status + ': ' + txt);
+      }
+      const data = await resp.json();
+      if(data.error){
+        alert('Server error: ' + data.error);
+        return;
+      }
+
+      const img = document.getElementById('vennImage');
+      img.src = data.image;
+      img.style.display = 'block';
+      document.getElementById('imageWrap').style.display='flex';
+      document.getElementById('emptyHint').style.display='none';
+
+      const pre = document.getElementById('intersectionsPre');
+      const intersections = data.intersections || {};
+      lastResults = intersections;
+      let txt = '';
+      for(const [k,v] of Object.entries(intersections)){
+        txt += `${k} (${v.length}): ${v.join(', ')}\n`;
+      }
+      pre.textContent = txt;
+      pre.style.display = 'block';
+      downloadBtn.style.display = 'inline-block';
+      pre.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }catch(err){
+      alert('Problem with input or server: ' + err.message);
+    }finally{
+      generateBtn.disabled = false;
+      const s = generateBtn.querySelector('.spinner');
+      if(s) s.remove();
+    }
+  }
+
+  generateBtn.addEventListener('click', generateVenn);
+
+  downloadBtn.addEventListener('click', () => {
+    if(!lastResults) return;
+    let txt = 'Intersection Results:\n\n';
+    for(const [k,v] of Object.entries(lastResults)){
+      txt += `${k} (${v.length}): ${v.join(', ')}\n`;
+    }
+    const blob = new Blob([txt], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'venndrabio_results.txt'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  function submitContact(e){
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    const status = document.getElementById('cf-status');
+
+    if(!name || !email || !message){ status.textContent = 'Please complete all fields.'; return; }
+
+    const subject = encodeURIComponent(`VennDraBio message from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+    window.location.href = `mailto:info@thunderbio.com?subject=${subject}&body=${body}`;
+
+    status.textContent = 'Opening email client...';
+    setTimeout(()=>{ status.textContent = ''; }, 3000);
+  }
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
